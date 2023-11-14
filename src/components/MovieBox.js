@@ -16,13 +16,12 @@ const iframeStyle = {
     height: '100%',
 };
 
-const MovieBox = ({ vidsrcLink }) => {
+const MovieBox = ({vidsrcLink}) => {
     return (
         <div style={playerStyle}>
             <iframe
+                allowFullScreen={true}
                 src={vidsrcLink}
-                frameborder="0"
-                allowfullscreen="true"
                 style={iframeStyle}
             ></iframe>
         </div>

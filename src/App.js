@@ -2,19 +2,24 @@ import React, {useState} from 'react';
 import {Layout, theme} from 'antd';
 import axios from "axios";
 import MovieBox from "./components/MovieBox";
-import MyLayout from './components/Layout';
-import {HomeTwoTone} from "@ant-design/icons";
+import SearchBar from "./components/SearchBar";
+import MovieDetail from "./components/MoviesDetail";
 
 const {Header, Content, Footer} = Layout;
 const apiKey = process.env.REACT_APP_OMDB_API_KEY;
 const App = () => {
     const [vidsrcLink, setVidSrcLink] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const [movieDetails, setMovieDetails] = useState(null);
     const searchMovie = async (movieTitle) => {
         setLoading(true); // Start loading
         try {
             const response = await axios.get(`https://www.omdbapi.com/?apikey=${apiKey}&s=${movieTitle}`);
+            const movieData = response.data.Search[0];
+            const {Title, Poster, Year} = movieData;
+
+            // Set movie details for MovieDetail component
+            setMovieDetails({title: Title, poster: Poster, year: Year});
 
             // Assuming the first search result is the desired movie
             const movieID = response.data.Search[0].imdbID;
@@ -24,7 +29,7 @@ const App = () => {
                 // Set the vidsrc link to the state to display the video
                 setVidSrcLink(vidsrcURL);
                 setLoading(false); // Start loading
-            }, 1000);
+            }, 300);
 
 
         } catch (error) {
@@ -48,34 +53,23 @@ const App = () => {
                     alignItems: 'center',
                 }}
             >
-                <div className="demo-logo">
-                    <HomeTwoTone/>
-                </div>
-
+                <SearchBar searchMovie={searchMovie} loading={loading}/>
             </Header>
-            <Content
-                className="site-layout"
-                style={{
-                    padding: '0 50px',
-                }}
-            >
+            <Content className="site-layout">
                 <div
                     style={{
-                        padding: 24,
-                        minHeight: 580,
+                        minHeight: 700,
                         background: colorBgContainer,
                     }}
                 >
-                    <MyLayout searchMovie={searchMovie} loading={loading}>
-                        <div>
-                            {vidsrcLink && <MovieBox vidsrcLink={vidsrcLink}/>}
-                        </div>
-                    </MyLayout>
+                    {vidsrcLink && movieDetails && <MovieDetail {...movieDetails} />}
+                    {vidsrcLink && <MovieBox vidsrcLink={vidsrcLink}/>}
                 </div>
             </Content>
             <Footer
                 style={{
                     textAlign: 'center',
+                    position: 'sticky',
                 }}
             >
                 Tercha Streaming ©2023 Created by Hans Landa 14

@@ -5,11 +5,9 @@ import SearchBar from './SearchBar';
 const MyLayout = ({children, searchMovie, loading}) => {
     return (
         <div>
-            <header>
-                <SearchBar searchMovie={searchMovie} loading={loading}/>
-            </header>
+            <SearchBar searchMovie={searchMovie} loading={loading}/>
             <main>{children}</main>
-            <footer>{/* Footer content */}</footer>
+
         </div>
     );
 };
