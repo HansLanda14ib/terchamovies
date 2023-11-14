@@ -6,7 +6,7 @@ import MyLayout from './components/Layout';
 import {HomeTwoTone} from "@ant-design/icons";
 
 const {Header, Content, Footer} = Layout;
-
+const apiKey = process.env.REACT_APP_OMDB_API_KEY;
 const App = () => {
     const [vidsrcLink, setVidSrcLink] = useState('');
     const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ const App = () => {
     const searchMovie = async (movieTitle) => {
         setLoading(true); // Start loading
         try {
-            const response = await axios.get(`http://www.omdbapi.com/?apikey=${process.env.API_KEY}&s=${movieTitle}`);
+            const response = await axios.get(`http://www.omdbapi.com/?apikey=${apiKey}&s=${movieTitle}`);
 
             // Assuming the first search result is the desired movie
             const movieID = response.data.Search[0].imdbID;
@@ -24,7 +24,7 @@ const App = () => {
                 // Set the vidsrc link to the state to display the video
                 setVidSrcLink(vidsrcURL);
                 setLoading(false); // Start loading
-            }, 2000);
+            }, 1000);
 
 
         } catch (error) {
