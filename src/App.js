@@ -14,7 +14,7 @@ const App = () => {
     const searchMovie = async (movieTitle) => {
         setLoading(true); // Start loading
         try {
-            const response = await axios.get(`http://www.omdbapi.com/?apikey=8d60962f&s=${movieTitle}`);
+            const response = await axios.get(`http://www.omdbapi.com/?apikey=${process.env.API_KEY}&s=${movieTitle}`);
 
             // Assuming the first search result is the desired movie
             const movieID = response.data.Search[0].imdbID;
