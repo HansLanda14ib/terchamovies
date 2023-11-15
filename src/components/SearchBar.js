@@ -1,26 +1,29 @@
-// components/SearchBar.js
-import {useState} from 'react';
-import Search from "antd/es/input/Search";
+import React from 'react';
+import {useAppContext} from '../stateManagment/context';
+import Search from "antd/es/input/Search"; // Ensure the correct path
 
-const SearchBar = ({searchMovie,loading}) => {
-    const [movieTitle, setMovieTitle] = useState('');
+const SearchBox = () => {
+    const {searchType, isLoading, getMoviesDetails, getTvShowDetails, searchInput, handleChange} = useAppContext();
 
     const handleSearch = () => {
-        // Call the function to search for the movie using OMDB API
-        searchMovie(movieTitle);
+        if (searchType === 'shows') return getTvShowDetails(searchInput);
+        else getMoviesDetails(searchInput);
+
     };
 
     return (
+
         <Search
-            value={movieTitle}
-            placeholder="Search movie title..."
-            onChange={(e) => setMovieTitle(e.target.value)}
+            value={searchInput}
+            placeholder="Search movie of tvshow title..."
+            onChange={(e) => handleChange(e.target.value)}
             onSearch={handleSearch}
             enterButton="Search"
             size="large"
-            loading={loading}
+            loading={isLoading}
         />
+
     );
 };
 
-export default SearchBar;
+export default SearchBox;

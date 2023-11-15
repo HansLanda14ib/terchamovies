@@ -1,16 +1,20 @@
 import React from 'react';
-import { Card, Col, Row, Typography } from 'antd';
-const { Title, Paragraph } = Typography;
+import {Card, Col, Row, Typography} from 'antd';
+import {useAppContext} from "../stateManagment/context";
 
-const MovieDetail = ({ title, poster, year }) => {
+const {Title, Paragraph} = Typography;
+
+const MovieDetail = () => {
+    const {title,poster,year} = useAppContext();
+
     return (
-        <div style={{ background: '#fff', padding: 24 }}>
+        <div style={{background: '#fff', padding: 24}}>
             <Row gutter={[16, 16]}>
                 <Col span={8}>
                     <Card
-                        cover={<img alt="poster" src={poster} />}
+                        cover={<img alt="poster" src={poster}/>}
                         bordered={false}
-                        style={{ width: 200 }}
+                        style={{width: 200}}
                     >
                     </Card>
                 </Col>

@@ -1,80 +1,92 @@
 import React, {useState} from 'react';
-import {Layout, theme} from 'antd';
-import axios from "axios";
-import MovieBox from "./components/MovieBox";
+import {Layout, Menu} from 'antd';
+import Movies from './components/Movies';
+import TVShows from './components/TVShows';
+import {useAppContext} from "./stateManagment/context";
 import SearchBar from "./components/SearchBar";
 import MovieDetail from "./components/MoviesDetail";
+import {Content} from "antd/es/layout/layout";
 
-const {Header, Content, Footer} = Layout;
-const apiKey = process.env.REACT_APP_OMDB_API_KEY;
+const {Header, Footer} = Layout;
+
+const items = [
+    {
+        label: 'Movies',
+        key: 'movies',
+    },
+    {
+        label: 'TV Shows',
+        key: 'shows',
+    },
+    {
+        label: (
+            <a href="https://github.com/hanslanda14ib" target="_blank" rel="noopener noreferrer">
+                Contact me
+            </a>
+        ),
+        key: 'alipay',
+    },
+];
+
 const App = () => {
-    const [vidsrcLink, setVidSrcLink] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [movieDetails, setMovieDetails] = useState(null);
-    const searchMovie = async (movieTitle) => {
-        setLoading(true); // Start loading
-        try {
-            const response = await axios.get(`https://www.omdbapi.com/?apikey=${apiKey}&s=${movieTitle}`);
-            const movieData = response.data.Search[0];
-            const {Title, Poster, Year} = movieData;
-
-            // Set movie details for MovieDetail component
-            setMovieDetails({title: Title, poster: Poster, year: Year});
-
-            // Assuming the first search result is the desired movie
-            const movieID = response.data.Search[0].imdbID;
-            setTimeout(() => {
-                // Construct the vidsrc link using the movie ID
-                const vidsrcURL = `https://vidsrc.to/embed/movie/${movieID}`;
-                // Set the vidsrc link to the state to display the video
-                setVidSrcLink(vidsrcURL);
-                setLoading(false); // Start loading
-            }, 300);
-
-
-        } catch (error) {
-            console.error('Error fetching movie data:', error);
+    const {title, clearValues, toMovie, toTvShow} = useAppContext();
+    const [current, setCurrent] = useState('movies');
+    const onClick = (e) => {
+        if (current !== e.key) {
+            if (e.key === 'shows') toTvShow();
+            if (e.key === 'movies') toMovie();
+            setCurrent(e.key);
+            clearValues(); // Call clearValues when toggling between sections
         }
     };
 
-    const {
-        token: {colorBgContainer},
-    } = theme.useToken();
-    return (
-        <Layout>
+    const renderContent = () => {
+        switch (current) {
+            case 'movies':
+                return <Movies/>;
+            case 'shows':
+                return <TVShows/>;
+            default:
+                return null;
+        }
+    };
 
-            <Header
-                style={{
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 1,
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                }}
-            >
-                <SearchBar searchMovie={searchMovie} loading={loading}/>
+
+    return (
+        <Layout style={{minHeight: '100vh'}}>
+            <Header style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{flex: 1}}>
+                    <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal"
+                          style={{color:'white', background: 'none', border: 'none'}}
+                    >
+                        {items.map((item) => (
+                            <Menu.Item key={item.key}>{item.label}</Menu.Item>
+                        ))}
+                    </Menu>
+                </div>
+                <div style={{ flex: 3, display: 'flex', justifyContent: 'center' }}>
+                    <SearchBar style={{ margin: '0 auto' }}/>
+                </div>
             </Header>
-            <Content className="site-layout">
+
+            <Content style={{padding: '0 50px'}}>
                 <div
                     style={{
-                        minHeight: 700,
-                        background: colorBgContainer,
+                        padding: 24,
+                        minHeight: 580,
+                        background: '#fff',
                     }}
                 >
-                    {vidsrcLink && movieDetails && <MovieDetail {...movieDetails} />}
-                    {vidsrcLink && <MovieBox vidsrcLink={vidsrcLink}/>}
+                    {title && <MovieDetail/>}
+                    {renderContent()}
                 </div>
             </Content>
-            <Footer
-                style={{
-                    textAlign: 'center',
-                    position: 'sticky',
-                }}
-            >
+
+            <Footer style={{textAlign: 'center', position: 'sticky', bottom: 0}}>
                 Tercha Streaming ©2023 Created by Hans Landa 14
             </Footer>
         </Layout>
     );
 };
+
 export default App;

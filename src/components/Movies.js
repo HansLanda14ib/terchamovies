@@ -1,4 +1,6 @@
-// components/MovieBox.js
+import React from 'react';
+import {useAppContext} from "../stateManagment/context";
+
 const playerStyle = {
     width: '100%',
     height: '0',
@@ -16,16 +18,18 @@ const iframeStyle = {
     height: '100%',
 };
 
-const MovieBox = ({vidsrcLink}) => {
+const Movies = () => {
+    const {url} = useAppContext();
     return (
         <div style={playerStyle}>
-            <iframe
+            {url && <iframe
                 allowFullScreen={true}
-                src={vidsrcLink}
+                src={url}
                 style={iframeStyle}
-            ></iframe>
+            ></iframe>}
+
         </div>
     );
 };
 
-export default MovieBox;
+export default Movies;
